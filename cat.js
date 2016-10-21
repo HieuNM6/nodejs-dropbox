@@ -3,30 +3,23 @@
 require('./helper')
 const fs = require('fs').promise
 
-const fileName = process.argv[2];
+async function cat(arg) {
+  const stat = await fs.stat(arg)
 
-async function cat() {
-  let error = false;
-  const stat = await fs.stat(fileName)
-                          .catch((_) => {
-                            console.log('File not found');
-                            error = true;
-                          });
-  if (!error) {
+  if (stat) {
     if (stat.isDirectory()) {
-      console.log(`${fileName} is a directory`);
-    } else {
-      console.log((await fs.readFile(fileName)).toString());
+      return `${arg} is a directory`
     }
+    return ((await fs.readFile(arg)).toString())
   }
+  return 'error occurred'
 }
 
-function main() {
-  if (fileName) {
-    cat();
-  } else {
-    console.log('Missing file name');
+function main(arg) {
+  if (arg) {
+    return cat(arg)
   }
+  return 'Missing file name'
 }
 
-main();
+module.exports = main

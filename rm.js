@@ -15,13 +15,9 @@ function blockPath(filePath) {
 }
 
 async function ls(dirname, paths) {
-  let error = false;
   const fileNames = await fs.readdir(dirname)
-                              .catch((err) => {
-                                console.log('Dir not found');
-                                error = true;
-                              });
-  if (!error) {
+
+  if (fileNames) {
     for (const fileName of fileNames) {
       const filePath = path.join(dirname, fileName);
       const stat = await fs.stat(filePath);
@@ -38,7 +34,6 @@ async function ls(dirname, paths) {
 
 async function rm(name) {
   let stat = await fs.stat(name)
-    .catch((err) => console.log('File or Directory not found'));
   if (stat) {
     if (stat.isDirectory()) {
       const files = await ls(name, [])
@@ -57,14 +52,14 @@ async function rm(name) {
       await fs.unlink(name);
     }
   }
+  return 'Successfull remove'
 }
-function main() {
-  if (process.argv[2]) {
-    rm(process.argv[2])
-  } else {
-    console.log('Missing file or folder argument')
+function main(arg) {
+  if (arg) {
+    return rm(arg)
   }
+  return 'Missing file or folder argument'
 }
 
-main()
+module.exports = main
 

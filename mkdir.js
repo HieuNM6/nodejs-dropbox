@@ -6,12 +6,9 @@ const fs = require('fs').promise
 async function mkdir(path) {
   if (path) {
     await fs.mkdir(path)
-      .catch((err) => {
-        if (err.code === 'EEXIST') {
-          console.log('Directory has existed');
-        }
-      });
+    return 'Directory has created successful'
   }
+  return "Can't create directory"
 }
 
 function removeDot(paths) {
@@ -23,23 +20,25 @@ function removeDot(paths) {
 
 async function recursiveMkdir(paths) {
   let lastPath = '';
+  let result
   for (let i = 0; i < paths.length; i++) {
     if (i === 0) {
-      await mkdir(paths[i])
+      result = await mkdir(paths[i])
       lastPath += paths[i]
     } else {
-      await mkdir(lastPath + '/' + paths[i])
+      result = await mkdir(lastPath + '/' + paths[i])
       lastPath += '/' + paths[i]
     }
   }
+  return result
 }
 
-function main() {
-  if (process.argv[2]) {
-    recursiveMkdir(removeDot(process.argv[2].split('/')));
-  } else {
-    console.log('Missing directory name');
+function main(arg) {
+  if (arg) {
+    return recursiveMkdir(removeDot(arg.split('/')));
   }
+  return 'Missing directory name';
 }
 
-main();
+module.exports = main
+

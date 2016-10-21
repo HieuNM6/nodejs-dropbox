@@ -4,18 +4,20 @@ require('./helper')
 const fs = require('fs').promise
 
 
-async function touch() {
-  const fd = await fs.open(process.argv[2], 'a')
-    .catch((err) => {
-      console.log(err);
-    });
-  const stat = await fs.stat(process.argv[2])
+async function touch(arg) {
+  const fd = await fs.open(arg, 'a')
+  const stat = await fs.stat(arg)
   await fs.futimes(fd, stat.atime, new Date())
-    .catch((err) => {
-      console.log(err);
-    });
   fs.close(fd);
+  return 'Successfull update'
 }
 
+async function main(arg) {
+  if (arg) {
+    return touch(arg)
+  }
+  return 'Missing file name'
+}
 
-process.argv[2] ? touch() : console.log('Missing file name');
+module.exports = main
+
