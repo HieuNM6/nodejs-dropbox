@@ -23,7 +23,9 @@ async function recursiveMkdir(paths) {
   let result
   for (let i = 0; i < paths.length; i++) {
     if (i === 0) {
-      result = await mkdir(paths[i])
+      if (paths[i] !== 'files') {
+        result = await mkdir(paths[i])
+      }
       lastPath += paths[i]
     } else {
       result = await mkdir(lastPath + '/' + paths[i])

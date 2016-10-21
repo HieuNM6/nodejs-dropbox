@@ -28,6 +28,8 @@
     "babel-cli": "^6.16.0",
     "babel-preset-nodev6": "^1.0.0",
     "babel-register": "^6.14.0",
+    "hapi": "^15.2.0",
+    "hapi-async-handler": "^1.0.3",
     "nodemon": "^1.10.2",
     "npm-run-all": "^3.1.0",
     "songbird": "^1.0.4",
