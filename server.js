@@ -39,14 +39,14 @@ async function readHandler(request, reply) {
 async function createHandler(request, reply) {
   /* eslint no-unused-expressions: 0 */
   const filePath = getLocalFilePathFromRequest(request)
-  const diff = getDiffFromLocal(filePath)
-  const lastOfDiff = diff[diff.length - 1]
-  console.log(getDiffFromLocal(filePath));
+  const folderPaths = getDiffFromLocal(filePath)
+  const lastFolderPath = folderPaths.pop()
   console.log(`Creating ${filePath}`)
-  if (isFile(lastOfDiff)) {
-    reply(touch(filePath).catch(err => err.code))
+  if (isFile(lastFolderPath)) {
+    await mkdir(path.join('files', folderPaths.join('/')))
+    reply(await touch(filePath).catch(err => err.code))
   } else {
-    reply(mkdir(path.join('files', request.params.file)).catch(err => err.code))
+    reply(await mkdir(path.join('files', request.params.file)).catch(err => err.code))
   }
 }
 
