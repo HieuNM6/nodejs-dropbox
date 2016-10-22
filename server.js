@@ -61,7 +61,9 @@ async function createHandler(request, reply) {
   console.log(`Creating ${filePath}`)
   if (isFile(lastFolderPath)) {
     await mkdir(path.join('files', folderPaths.join('/')))
-    reply(await touch(filePath).catch(err => err.code))
+    await touch(filePath).catch(err => err.code)
+    await fs.writeFile(filePath, request.payload)
+    reply('Successful created file')
   } else {
     reply(await mkdir(path.join('files', request.params.file)).catch(err => err.code))
   }
