@@ -93,14 +93,16 @@ async function updateHandler(request, reply) {
   if (stat) {
     if (stat.isDirectory()) {
       reply().code(405)
+    } else if (stat.isFile()) {
+      await fs.writeFile(filePath, request.payload).catch((err) => {
+        reply(err.message).code(405)
+      })
+      reply()
     } else {
       reply().code(405)
     }
   } else {
-    await fs.writeFile(filePath, request.payload).catch((err) => {
-      reply(err.message).code(405)
-    })
-    reply()
+    reply().code(405)
   }
 }
 
