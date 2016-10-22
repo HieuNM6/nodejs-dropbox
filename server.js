@@ -5,6 +5,9 @@ require('./helper')
 const path = require('path')
 const fs = require('fs').promise
 const Hapi = require('hapi')
+const Inert = require('inert')
+const zipFolder = require('zip-folder');
+
 const asyncHandlerPlugin = require('hapi-async-handler')
 
 const cat = require('./cat')
@@ -32,8 +35,22 @@ async function readHandler(request, reply) {
   const filePath = getLocalFilePathFromRequest(request)
 
   console.log(`Reading ${filePath}`)
-  const data = await cat(filePath).catch((err) => err.message)
-  reply(data)
+  const stat = await fs.stat(filePath).catch((err) => err.message)
+  if (stat) {
+    if (stat.isDirectory()) {
+      const zipPath = 'temp.zip'
+      zipFolder(filePath, zipPath, (err) => {
+        if (err) {
+          reply(err.message)
+        } else {
+          reply.file(zipPath)
+        }
+      })
+    } else {
+      const data = await cat(filePath).catch((err) => err.message)
+      reply(data)
+    }
+  }
 }
 
 async function createHandler(request, reply) {
@@ -74,6 +91,7 @@ async function main() {
     }
   })
   server.register(asyncHandlerPlugin)
+  server.register(Inert, () => {})
   server.connection({ port })
 
   server.route([
