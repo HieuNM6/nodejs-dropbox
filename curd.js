@@ -1,16 +1,32 @@
 const path = require('path')
 const fs = require('fs').promise
-const zipFolder = require('zip-folder');
+const zipFolder = require('zip-folder')
+const nssocket = require('nssocket')
 const argv = require('yargs')
              .default('dir', 'files')
              .argv;
 
+const outbound = new nssocket.NsSocket(
+  {
+    reconnect: true,
+  }
+);
 
 const cat = require('./cat')
 const rm = require('./rm')
 const mkdir = require('./mkdir')
 const touch = require('./touch')
 const ls = require('./ls')
+
+function sendSocket(data) {
+  outbound.connect(8001, '127.0.0.1', (err) => {
+    if (err) {
+      console.log('Not have client connected');
+    } else {
+      outbound.send(['action', 'serverPath', 'requestPath', 'requestParams', 'type', 'updated'], data)
+    }
+  })
+}
 
 function getLocalFilePathFromRequest(request) {
   if (request.params.file) {
@@ -70,10 +86,26 @@ async function createHandler(request, reply) {
     await touch(filePath).catch(err => err.code)
     await fs.writeFile(filePath, request.payload)
     reply('Successful created file')
+    sendSocket(
+      {
+        action: 'write',
+        serverPath: filePath,
+        requestPath: folderPaths.join('/'),
+        requestParams: request.params.file,
+        type: 'file',
+        updated: new Date()
+      })
   } else {
     await mkdir(path.join(argv.dir, request.params.file)).catch((err) => {
       reply(err.message).code(500)
     });
+    sendSocket(
+      {
+        action: 'write',
+        requestParams: request.params.file,
+        type: 'directory'
+      }
+    )
     reply('Successful create folder')
   }
 }
@@ -87,10 +119,14 @@ async function updateHandler(request, reply) {
     if (stat.isDirectory()) {
       reply().code(405)
     } else if (stat.isFile()) {
-      await fs.writeFile(filePath, request.payload).catch((err) => {
-        reply(err.message).code(405)
-      })
+      await fs.writeFile(filePath, request.payload)
       reply()
+      sendSocket(
+        {
+          action: 'update',
+          requestParams: request.params.file
+        }
+      )
     } else {
       reply().code(405)
     }
@@ -107,6 +143,12 @@ async function deleteHandler(request, reply) {
     reply(err.message).code(400)
   })
   reply('Successful to delete')
+  sendSocket(
+    {
+      action: 'delete',
+      requestParams: request.params.file
+    }
+  )
 }
 
 module.exports = {
