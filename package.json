@@ -38,6 +38,7 @@
     "request": "^2.75.0",
     "songbird": "^1.0.4",
     "trycatch": "^1.5.21",
+    "unzip": "^0.1.11",
     "yargs": "^6.3.0",
     "zip-folder": "^1.0.0"
   },

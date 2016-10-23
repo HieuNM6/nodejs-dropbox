@@ -3,6 +3,7 @@ const mkdir = require('mkdirp')
 const path = require('path')
 const request = require('request')
 const fs = require('fs')
+const unzip = require('unzip')
 
 const rm = require('../rm')
 
@@ -47,4 +48,15 @@ async function main() {
   server.listen(8001)
 }
 
+async function getInitialFile() {
+  request({
+    headers: {
+      Accept: 'application/x-gtar'
+    },
+    uri: 'http://localhost:8000',
+    method: 'GET'
+  }).pipe(unzip.Extract({ path: './client' }));
+}
+
+getInitialFile()
 main()
