@@ -28,6 +28,7 @@
     "babel-cli": "^6.16.0",
     "babel-preset-nodev6": "^1.0.0",
     "babel-register": "^6.14.0",
+    "chokidar": "^1.6.1",
     "hapi": "^15.2.0",
     "hapi-async-handler": "^1.0.3",
     "inert": "^4.0.2",
