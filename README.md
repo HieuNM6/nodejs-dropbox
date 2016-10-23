@@ -37,8 +37,6 @@ Time spent: `12 hours`
 
 ![CRUD](https://raw.githubusercontent.com/HieuNM6/nodejs-dropbox/master/CRUD.gif)
 
-![SYNC](https://raw.githubusercontent.com/HieuNM6/nodejs-dropbox/master/sync.gif)
-
-![SYNC2](https://raw.githubusercontent.com/HieuNM6/nodejs-dropbox/master/sync2.gif)
+![SYNC](https://raw.githubusercontent.com/HieuNM6/nodejs-dropbox/master/sync_pic.gif)
 
 
