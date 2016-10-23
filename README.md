@@ -35,7 +35,8 @@ Time spent: `12 hours`
 
 ## Walkthrough
 
-![ Walkthrough](...)
+![CRUD](https://raw.githubusercontent.com/HieuNM6/nodejs-dropbox/master/CRUD.gif)
 
+![SYNC](https://raw.githubusercontent.com/HieuNM6/nodejs-dropbox/master/sync.gif)
 
 
