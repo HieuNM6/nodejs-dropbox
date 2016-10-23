@@ -10,29 +10,31 @@ const rm = require('../rm')
 async function dataHandler(data) {
   if (data.action === 'write') {
     if (data.type === 'file') {
-      mkdir(path.join(process.cwd(), 'client', data.requestPath))
+      mkdir(path.join(process.cwd(), data.requestPath))
       request.get('http://localhost:8000/' + data.requestParams, (err, res, body) => {
         if (err) {
           console.log(err.message);
         } else {
-          console.log(body);
-          fs.writeFile('./client/' + data.requestParams, body)
+          console.log(`Add file ${data.requestParams}`);
+          fs.writeFile('./' + data.requestParams, body)
         }
       })
     } else if (data.type === 'directory') {
-      mkdir(path.join(process.cwd(), 'client', data.requestParams))
+      console.log(`Add folder ${data.requestParams}`);
+      mkdir(path.join(process.cwd(), data.requestParams))
     }
   } else if (data.action === 'update') {
     request.get('http://localhost:8000/' + data.requestParams, (err, res, body) => {
       if (err) {
         console.log(err.message);
       } else {
-        console.log(body);
-        fs.writeFile('./client/' + data.requestParams, body)
+        console.log(`Update file ${data.requestParams}`);
+        fs.writeFile('./' + data.requestParams, body)
       }
     })
   } else if (data.action === 'delete') {
-    await rm('./client/' + data.requestParams).catch((err) => console.log(err.message))
+    console.log(`Delete file ${data.requestParams}`);
+    await rm('./' + data.requestParams).catch((err) => console.log(err.message))
   } else {
     console.log('Missing action');
   }
@@ -55,7 +57,7 @@ async function getInitialFile() {
     },
     uri: 'http://localhost:8000',
     method: 'GET'
-  }).pipe(unzip.Extract({ path: './client' }));
+  }).pipe(unzip.Extract({ path: './' }));
 }
 
 getInitialFile()
