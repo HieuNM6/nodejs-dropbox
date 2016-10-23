@@ -93,8 +93,9 @@ function removeLastAndFirst(arg) {
 }
 
 async function watchFile() {
-  chokidar.watch('./' + argv.dir, { ignored: /[\/\\]\./ })
+  chokidar.watch('./' + argv.dir, { ignored: /[\/\\]\./, ignoreInitial: true })
   .on('addDir', (path) => {
+    console.log(`Add folder ${removeDir(path)}`);
     sendSocket({
       action: 'write',
       type: 'directory',
@@ -102,6 +103,7 @@ async function watchFile() {
     })
   })
   .on('add', (path) => {
+    console.log(`Add file ${removeDir(path)}`);
     sendSocket(
       {
         action: 'write',
@@ -111,6 +113,7 @@ async function watchFile() {
       })
   })
   .on('change', (path) => {
+    console.log(`Update file ${removeDir(path)}`);
     sendSocket(
       {
         action: 'update',
@@ -118,6 +121,7 @@ async function watchFile() {
       })
   })
   .on('unlinkDir', (path) => {
+    console.log(`Remove ${removeDir(path)}`);
     sendSocket(
       {
         action: 'delete',
@@ -125,6 +129,7 @@ async function watchFile() {
       })
   })
   .on('unlink', (path) => {
+    console.log(`Remove ${removeDir(path)}`);
     sendSocket(
       {
         action: 'delete',
