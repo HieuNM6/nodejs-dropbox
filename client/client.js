@@ -4,6 +4,7 @@ const path = require('path')
 const request = require('request')
 const fs = require('fs')
 const unzip = require('unzip')
+const chokidar = require('chokidar')
 
 const rm = require('../rm')
 
@@ -57,8 +58,24 @@ async function getInitialFile() {
     },
     uri: 'http://localhost:8000',
     method: 'GET'
+  /*eslint-disable */
   }).pipe(unzip.Extract({ path: './' }));
+  /*eslint-enable */
 }
 
+async function watchFile() {
+  chokidar.watch('.', { ignored: /[\/\\]\./, ignoreInitial: true })
+  .on('addDir', (detail) => {
+    request.put('http://localhost:8000/' + detail, {})
+  })
+  .on('unlinkDir', (detail) => {
+    request.delete('http://localhost:8000/' + detail)
+  })
+  .on('unlink', (detail) => {
+    request.delete('http://localhost:8000/' + detail)
+  })
+}
+
+watchFile()
 getInitialFile()
 main()
