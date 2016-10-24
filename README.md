@@ -29,7 +29,7 @@ Time spent: `12 hours`
 - [ ] Client will sync back to Server over TCP
 - [ ] Client will preserve a 'Conflict' file when pushed changes preceeding local edits
 - [ ] Client can stream and scrub video files (e.g., on iOS)
-- [ ] Client can create a directory with an archive
+- [x] Client can create a directory with an archive
 - [ ] User can connect to the server using an FTP client
 
 
