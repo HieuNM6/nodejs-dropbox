@@ -68,6 +68,22 @@ async function watchFile() {
   .on('addDir', (detail) => {
     request.put('http://localhost:8000/' + detail, {})
   })
+  .on('add', (detail) => {
+    fs.readFile(detail, (err, data) => {
+      if (err) {
+        console.log(err.message)
+      } else {
+        request({
+          headers: {
+            'Content-Type': 'text/plain'
+          },
+          uri: 'http://localhost:8000/' + detail,
+          method: 'PUT',
+          body: data
+        })
+      }
+    })
+  })
   .on('unlinkDir', (detail) => {
     request.delete('http://localhost:8000/' + detail)
   })
